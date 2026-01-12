@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  ros-dev:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        USER_UID: ${USER_UID:-1000}
+        USER_GID: ${USER_GID:-1000}
+    image: bot-sojourner-dev:latest
+    container_name: bot-sojourner-dev
+    privileged: true
+    network_mode: host
+    runtime: nvidia
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics,video
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - ..:/workspaces/bot-sojourner:cached
+      - /dev:/dev
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./ros_logs:/home/ros/.ros/log
+      - ../data:/workspaces/bot-sojourner/data
+    working_dir: /workspaces/bot-sojourner
+    command: /bin/bash -c "while sleep 1000; do :; done"
