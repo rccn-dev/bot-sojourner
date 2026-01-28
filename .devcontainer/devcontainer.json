@@ -1,28 +1,40 @@
 {
-    "name": "ROS 2 Jetson Development (Isaac ROS 3.2)",
-    "dockerComposeFile": "docker-compose.yml",
-    "service": "ros-dev",
-    "workspaceFolder": "/workspaces/bot-sojourner",
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "ms-iot.vscode-ros",
-                "ms-vscode.cpptools",
-                "twxs.cmake",
-                "ms-python.python",
-                "ms-azuretools.vscode-docker",
-                "redhat.vscode-xml"
-            ],
-            "settings": {
-                "python.autoComplete.extraPaths": [
-                    "/opt/ros/humble/lib/python3.10/site-packages"
-                ],
-                "python.analysis.extraPaths": [
-                    "/opt/ros/humble/lib/python3.10/site-packages"
-                ]
-            }
+    "name": "ROS 2 Development Container",
+    "privileged": true,
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "BASE_IMAGE": "nvcr.io/nvidia/isaac/ros:aarch64-ros2_humble_4c0c55dddd2bbcc3e8d5f9753bee634c",
+            "USERNAME": "ros",
+            "USER_UID": "1000",
+            "USER_GID": "1000"
         }
     },
-    "postCreateCommand": "sudo apt-get update && rosdep update",
-    "remoteUser": "ros"
+    "workspaceFolder": "/home/ws",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/ws,type=bind",
+    "remoteUser": "ros",
+    "customizations": {
+        "vscode": {
+            "extensions":[
+                "ms-vscode.cpptools",
+                "ms-iot.vscode-ros"
+            ]
+        }
+    },
+    "containerEnv": {
+        "DISPLAY": "unix:0",
+        "ROS_LOCALHOST_ONLY": "1",
+        "ROS_DOMAIN_ID": "42"
+    },
+    "runArgs": [
+        "--net=host",
+        "--pid=host",
+        "--ipc=host",
+        "-e", "DISPLAY=${env:DISPLAY}"
+    ],
+    "mounts": [
+       "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+       "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
+    ],
+    "postCreateCommand": "echo 'Container started. Run rosdep update manually if needed.'"
 }

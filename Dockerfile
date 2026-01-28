@@ -1,5 +1,5 @@
 # Base image for JetPack 6.2 / Isaac ROS 3.2 (Humble)
-FROM nvcr.io/nvidia/isaac/ros:aarch64-humble-base-3.2
+FROM nvcr.io/nvidia/isaac/ros:aarch64-ros2_humble_4c0c55dddd2bbcc3e8d5f9753bee634c
 
 # Set non-interactive installation
 ENV DEBIAN_FRONTEND=noninteractive
